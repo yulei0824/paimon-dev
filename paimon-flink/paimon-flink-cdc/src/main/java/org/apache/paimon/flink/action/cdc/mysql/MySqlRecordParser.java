@@ -79,6 +79,7 @@ public class MySqlRecordParser implements FlatMapFunction<CdcSourceRecord, RichC
     private static final String PAYLOAD_OP_INSERT = "c";
     private static final String PAYLOAD_OP_UPDATE = "u";
     private static final String PAYLOAD_OP_DELETE = "d";
+    private static final String PAYLOAD_OP_READ = "r";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ZoneId serverTimeZone;
@@ -227,7 +228,7 @@ public class MySqlRecordParser implements FlatMapFunction<CdcSourceRecord, RichC
         if (!after.isEmpty()) {
             after = mapKeyCaseConvert(after, caseSensitive, recordKeyDuplicateErrMsg(after));
             RowKind rowKind;
-            if (op.equalsIgnoreCase(PAYLOAD_OP_INSERT)) {
+            if (op.equalsIgnoreCase(PAYLOAD_OP_INSERT) || op.equalsIgnoreCase(PAYLOAD_OP_READ)) {
                 rowKind = RowKind.INSERT;
             } else if (op.equalsIgnoreCase(PAYLOAD_OP_UPDATE)) {
                 rowKind = RowKind.UPDATE_AFTER;
